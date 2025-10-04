@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+// TO DO: criar parâmetro de erro em caso de digitação não numérica entre 1-3
 #define MAX_DISCOS 10 // Define o número máximo de discos permitidos
 
 // Estrutura para representar as três torres
