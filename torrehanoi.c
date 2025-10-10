@@ -15,21 +15,24 @@ int movimento_valido(int origem, int destino);
 void mover_disco(int origem, int destino);
 int verificar_vitoria();
 
-int main() {
+int main()
+{
     int origem, destino, movimentos = 0;
 
     printf("--- Torre de Hanoi ---\n");
     printf("Quantos discos você gostaria de jogar (1 a %d)? ", MAX_DISCOS);
     scanf("%d", &num_discos);
 
-    if (num_discos < 1 || num_discos > MAX_DISCOS) {
+    if (num_discos < 1 || num_discos > MAX_DISCOS)
+    {
         printf("Número de discos inválido. O jogo será encerrado.\n");
         return 1;
     }
 
     inicializar_torres(num_discos);
 
-    while (!verificar_vitoria()) {
+    while (!verificar_vitoria())
+    {
         exibir_torres();
         printf("\nMovimento %d:\n", movimentos + 1);
         printf("Mover do pilar (1-3): ");
@@ -41,10 +44,13 @@ int main() {
         origem--;
         destino--;
 
-        if (movimento_valido(origem, destino)) {
+        if (movimento_valido(origem, destino))
+        {
             mover_disco(origem, destino);
             movimentos++;
-        } else {
+        }
+        else
+        {
             printf("\nMovimento inválido! Tente novamente.\n");
         }
     }
@@ -60,8 +66,10 @@ int main() {
  *
  * @param n O número de discos no jogo.
  */
-void inicializar_torres(int n) {
-    for (int i = 0; i < n; i++) {
+void inicializar_torres(int n)
+{
+    for (int i = 0; i < n; i++)
+    {
         torres[0][i] = n - i;
     }
     topo[0] = n - 1;
@@ -70,13 +78,19 @@ void inicializar_torres(int n) {
 /**
  * @brief Exibe o estado atual das três torres no console.
  */
-void exibir_torres() {
+void exibir_torres()
+{
     printf("\n--- TORRES ---\n");
-    for (int i = num_discos - 1; i >= 0; i--) {
-        for (int j = 0; j < 3; j++) {
-            if (i <= topo[j]) {
+    for (int i = num_discos - 1; i >= 0; i--)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            if (i <= topo[j])
+            {
                 printf("    %d    ", torres[j][i]);
-            } else {
+            }
+            else
+            {
                 printf("    |    ");
             }
         }
@@ -93,21 +107,26 @@ void exibir_torres() {
  * @param destino O pilar para onde o disco será movido.
  * @return 1 se o movimento for válido, 0 caso contrário.
  */
-int movimento_valido(int origem, int destino) {
+int movimento_valido(int origem, int destino)
+{
     // Verifica se os pilares de origem e destino são válidos
-    if (origem < 0 || origem > 2 || destino < 0 || destino > 2) {
+    if (origem < 0 || origem > 2 || destino < 0 || destino > 2)
+    {
         return 0;
     }
     // Não pode mover de um pilar vazio
-    if (topo[origem] == -1) {
+    if (topo[origem] == -1)
+    {
         return 0;
     }
     // Pode mover para um pilar vazio
-    if (topo[destino] == -1) {
+    if (topo[destino] == -1)
+    {
         return 1;
     }
     // O disco do topo da origem deve ser menor que o do topo do destino
-    if (torres[origem][topo[origem]] < torres[destino][topo[destino]]) {
+    if (torres[origem][topo[origem]] < torres[destino][topo[destino]])
+    {
         return 1;
     }
     return 0;
@@ -119,7 +138,8 @@ int movimento_valido(int origem, int destino) {
  * @param origem O pilar de onde o disco será movido.
  * @param destino O pilar para onde o disco será movido.
  */
-void mover_disco(int origem, int destino) {
+void mover_disco(int origem, int destino)
+{
     int disco = torres[origem][topo[origem]];
     topo[origem]--;
     topo[destino]++;
@@ -131,8 +151,10 @@ void mover_disco(int origem, int destino) {
  *
  * @return 1 se o jogo terminou, 0 caso contrário.
  */
-int verificar_vitoria() {
-    if (topo[2] == num_discos - 1) {
+int verificar_vitoria()
+{
+    if (topo[2] == num_discos - 1)
+    {
         return 1;
     }
     return 0;
