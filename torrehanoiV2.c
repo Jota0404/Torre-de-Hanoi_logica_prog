@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <locale>
 
 #define MAX_DISCOS 10 // O limite de discos continua sendo 10
 
