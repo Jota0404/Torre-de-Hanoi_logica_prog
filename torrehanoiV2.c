@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <locale.h>
+#include <string.h> 
 
-#define MAX_DISCOS 10 // O limite de discos continua sendo 10
+#define MAX_DISCOS 10 
 
 // Estrutura para representar as três torres
 int torres[3][MAX_DISCOS];
@@ -10,7 +12,7 @@ int num_discos;
 
 // Protótipos das funções
 void inicializar_torres(int n);
-void exibir_torres();
+void exibir_torres(); 
 int movimento_valido(int origem, int destino);
 void mover_disco(int origem, int destino);
 int verificar_vitoria();
@@ -21,26 +23,23 @@ int main() {
     int status_leitura;
 
     printf("--- Torre de Hanoi ---\n");
-    printf("Quantos discos você gostaria de jogar (1 a %d)? ", MAX_DISCOS);
+    printf("Quantos discos voce gostaria de jogar (1 a %d)? ", MAX_DISCOS);
     
-    // 1. Tenta ler um número inteiro e verifica o status da leitura
     status_leitura = scanf("%d", &num_discos);
-    limpar_buffer_entrada(); // Limpa o buffer para a próxima entrada
+    limpar_buffer_entrada(); 
 
-    //verifica se a leitura foi bem-sucedida e se o número está no intervalo válido
     if (status_leitura != 1 || num_discos < 1 || num_discos > MAX_DISCOS) {
         printf("\n***************************************************\n");
-        printf("  ERRO: caractere ou número inválido.\n");
-        printf("  Por favor, insira um número entre 1 e %d.\n", MAX_DISCOS);
+        printf("  ERRO: caractere ou numero invalido.\n");
+        printf("  Por favor, insira um numero entre 1 e %d.\n", MAX_DISCOS);
         printf("***************************************************\n\n");
         printf("Reiniciando o jogo...\n\n");
 
-        // reinicia o jogo
-        main(); // Chama a função main novamente para reiniciar o jogo
+        main(); 
         return 0;
     }
 
-    inicializar_torres(num_discos);
+    inicializar_torres(num_discos); 
 
     while (!verificar_vitoria()) {
         exibir_torres();
@@ -48,7 +47,7 @@ int main() {
         
         printf("Mover do pilar (1-3): ");
         if (scanf("%d", &origem) != 1) {
-            printf("\nEntrada inválida. Tente novamente.\n");
+            printf("\nEntrada invalida. Tente novamente.\n");
             limpar_buffer_entrada();
             continue;
         }
@@ -56,7 +55,7 @@ int main() {
 
         printf("Para o pilar (1-3): ");
         if (scanf("%d", &destino) != 1) {
-            printf("\nEntrada inválida. Tente novamente.\n");
+            printf("\nEntrada invalida. Tente novamente.\n");
             limpar_buffer_entrada();
             continue;
         }
@@ -69,16 +68,16 @@ int main() {
             mover_disco(origem, destino);
             movimentos++;
         } else {
-            printf("\nMovimento inválido! Tente novamente.\n");
+            printf("\nMovimento invalido! Tente novamente.\n");
             // Adiciona uma pequena pausa para o usuário ler a mensagem
-            getchar(); // Limpa o buffer de entrada
+            // getchar(); // Limpa o buffer de entrada
             printf("Pressione Enter para continuar...");
-            getchar();
+            getchar(); // Espera o Enter
         }
     }
 
     exibir_torres();
-    printf("\nParabéns! Você completou a Torre de Hanoi em %d movimentos.\n", movimentos);
+    printf("\nParabens! Voce completou a Torre de Hanoi em %d movimentos.\n", movimentos);
 
     return 0;
 }
@@ -93,7 +92,7 @@ void limpar_buffer_entrada() {
 }
 
 
-// --- DEMAIS FUNÇÕES (sem alteração) ---
+// --- DEMAIS FUNÇÕES ---
 
 void inicializar_torres(int n) {
     for (int i = 0; i < n; i++) {
@@ -107,52 +106,89 @@ void inicializar_torres(int n) {
 
 /**
  * @brief Exibe o estado atual das três torres com uma representação visual dos discos.
+ * *Usa vetores de tamanho fixo (baseado em MAX_DISCOS) 
  */
 void exibir_torres() {
+    // Define um tamanho máximo constante para os "pedaços" da torre.
+    // (MAX_DISCOS * 2) + 1 para os caracteres, + 1 para o '\0'.
+    const int TAM_MAX_PEDACO = (MAX_DISCOS * 2) + 2;
+
+    // Vetor (buffer de string) para construir cada linha da saída
+    char linha_buffer[512]; 
+    
+    // Vetores (buffers) para construir "pedaços" da torre
+    char pedaco_torre[TAM_MAX_PEDACO];
+    char pedaco_base[TAM_MAX_PEDACO];
+    char pedaco_rotulo[TAM_MAX_PEDACO];
+
     int max_largura_disco = (num_discos * 2) - 1 + 2;
     printf("\n--- TORRE DE HANOI ---\n");
+
     // Itera de cima para baixo (do topo da torre para a base)
     for (int i = num_discos - 1; i >= 0; i--) {
+        linha_buffer[0] = '\0'; 
+
         // Para cada uma das 3 torres
         for (int j = 0; j < 3; j++) {
+            int k = 0; 
             int espacamento_lateral;
+
             if (i <= topo[j]) {
+                // --- Gera o DISCO no vetor "pedaco_torre" ---
                 int tamanho_disco = torres[j][i];
                 int num_chars = (tamanho_disco * 2) - 1;
                 int largura_visual_disco = num_chars + 2;
                 espacamento_lateral = (max_largura_disco - largura_visual_disco) / 2;
-                for(int k = 0; k < espacamento_lateral; k++) printf(" ");
-                printf("(");
-                for(int k = 0; k < num_chars; k++) printf("_");
-                printf(")");
-                for(int k = 0; k < espacamento_lateral; k++) printf(" ");
+                
+                for(int l = 0; l < espacamento_lateral; l++) pedaco_torre[k++] = ' ';
+                pedaco_torre[k++] = '(';
+                for(int l = 0; l < num_chars; l++) pedaco_torre[k++] = '_';
+                pedaco_torre[k++] = ')';
+                for(int l = 0; l < espacamento_lateral; l++) pedaco_torre[k++] = ' ';
+
             } else {
+                // --- Gera o MASTRO VAZIO no vetor "pedaco_torre" ---
                 espacamento_lateral = (max_largura_disco - 1) / 2;
-                for(int k = 0; k < espacamento_lateral; k++) printf(" ");
-                printf("|");
-                for(int k = 0; k < espacamento_lateral; k++) printf(" ");
+                for(int l = 0; l < espacamento_lateral; l++) pedaco_torre[k++] = ' ';
+                pedaco_torre[k++] = '|';
+                for(int l = 0; l < espacamento_lateral; l++) pedaco_torre[k++] = ' ';
             }
-            printf("  ");
+            // Termina a string do "pedaço"
+            pedaco_torre[k] = '\0'; 
+
+            // Concatena o pedaço da torre no vetor da linha
+            strcat(linha_buffer, pedaco_torre);
+            strcat(linha_buffer, "  "); // Adiciona o espaço entre as torres
         }
-        printf("\n");
+        // Imprime o vetor de linha (a linha inteira) de uma só vez
+        printf("%s\n", linha_buffer);
     }
 
-    // Imprime a base das torres
+    // --- GERAÇÃO DA BASE ---
+    linha_buffer[0] = '\0'; 
+    
+    memset(pedaco_base, '=', max_largura_disco); 
+    pedaco_base[max_largura_disco] = '\0';
+
     for (int j = 0; j < 3; j++) {
-        for (int k = 0; k < max_largura_disco; k++) printf("=");
-        printf("  ");
+        strcat(linha_buffer, pedaco_base);
+        strcat(linha_buffer, "  ");
     }
-    printf("\n");
+    printf("%s\n", linha_buffer); 
 
-    // Imprime os números dos pilares, centralizados
+    // --- GERAÇÃO DOS NÚMEROS ---
+    linha_buffer[0] = '\0'; 
+
     for (int j = 1; j <= 3; j++) {
         int espacamento_lateral = (max_largura_disco - 1) / 2;
-        for (int k = 0; k < espacamento_lateral; k++) printf(" ");
-        printf("%d", j);
-        for (int k = 0; k < espacamento_lateral; k++) printf(" ");
-        printf("  ");
+        
+        // Usa sprintf para formatar o número com espaçamento diretamente no vetor
+        sprintf(pedaco_rotulo, "%*s%d%*s", espacamento_lateral, "", j, espacamento_lateral, "");
+
+        strcat(linha_buffer, pedaco_rotulo);
+        strcat(linha_buffer, "  ");
     }
-    printf("\n");
+    printf("%s\n", linha_buffer); 
 }
 
 
