@@ -19,6 +19,8 @@ int verificar_vitoria();
 void limpar_buffer_entrada();
 
 int main() {
+    setlocale(LC_ALL, "");
+    
     int origem, destino, movimentos = 0;
     int status_leitura;
 
